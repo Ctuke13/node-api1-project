@@ -14,14 +14,12 @@ server.post("/api/users", async (req, res) => {
   try {
     const { name, bio } = req.body;
     if (!name || !bio) {
-      res.status(422).json({
+      res.status(400).json({
         message: "Please provide name and bio for the user",
       });
     } else {
       const createdUser = await User.insert({ name, bio });
-      res
-        .status(201)
-        .json({ message: "Success creating a new user", data: createdUser });
+      res.status(201).json(createdUser);
     }
   } catch (err) {
     res.status(500).json({
@@ -36,9 +34,9 @@ server.get("/api/users", async (req, res) => {
     const users = await User.find();
     res.status(200).json(users);
   } catch (err) {
-    res.status(500).json({
-      message: "The users information could not be retrieved",
-    });
+    res
+      .status(500)
+      .json({ message: "The users information could not be retrieved" });
   }
 });
 
@@ -51,11 +49,8 @@ server.get("/api/users/:id", async (req, res) => {
       res.status(404).json({
         message: "The user with the specified ID does not exist",
       });
-      console.log(res[message]);
-    } else {
-      console.log("The User:", user.name);
-      res.status(200).json(user);
     }
+    res.status(200).json(user);
   } catch (err) {
     res.status(500).json({
       message: "The user information could not be retrieved",
@@ -73,10 +68,7 @@ server.delete("/api/users/:id", async (req, res) => {
         message: "The user with the specified ID does not exist",
       });
     } else {
-      res.status(200).json({
-        message: `success deleting user ${id}`,
-        data: deletedUser,
-      });
+      res.status(200).json(deletedUser);
     }
   } catch (err) {
     res.status(500).json({
@@ -106,9 +98,7 @@ server.put("/api/users/:id", async (req, res) => {
           message: "Please provide name and bio for the user",
         });
       } else {
-        res.status(200).json({
-          data: updatedUser,
-        });
+        res.status(200).json(updatedUser);
       }
     }
   } catch (err) {
